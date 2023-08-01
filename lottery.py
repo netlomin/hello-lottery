@@ -67,7 +67,6 @@ class Lottery:
         issue = crop(img, issue)[0]
         numbers = sort_box(numbers)
         numbers = crop(img, numbers)
-
         numbers.append(issue)
 
         recognition = self.recognizer(numbers)
@@ -76,7 +75,6 @@ class Lottery:
 
         issue, _ = recognition.pop()
         numbers = recognition
-
         numbers = [num[0] for num in numbers]
 
         if not result_process:
@@ -101,8 +99,10 @@ class Lottery:
 
         # 识别
         recognition = self.recognize(img, *detection, result_process=True)
-        if not recognition or recognition_only:
+        if not recognition:
             return
+        if recognition_only:
+            return recognition
 
         # 检查
         return self.check(*recognition)

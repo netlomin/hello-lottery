@@ -51,13 +51,11 @@ class Detector:
             pred = self.model(img, augment=True)[0]
 
         pred = non_max_suppression(pred, self.conf_thres, self.iou_thres)[0]
-
         if not len(pred):
             return
         
         # Scale boxes size back
         pred[:, :4] = scale_coords(img.shape[2:], pred[:, :4], shape).round()
-
         pred_ = pred[:, [0, 1, 2, 3, 5]].to("cpu", int).numpy()
         cls = np.unique(pred_[:, -1], return_index=False)
 
@@ -72,7 +70,5 @@ class Detector:
             return
 
         numbers = pred_[pred_[:, -1] == 1]
-        
         issue = pred_[pred_[:, -1] == 3]
-        
         return code, issue, numbers
