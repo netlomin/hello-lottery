@@ -1,28 +1,26 @@
 import argparse
-import sys
 from pathlib import Path
-
-import cv2
-import numpy as np
-import torch
-
 from detector import Detector
 from recognizer import Recognizer
 from checker import Checker
 from utils import *
 
+
 class Lottery:
 
     def __init__(
-        self,
-        detector = "./checkouts/detection.pt",
-        recognizer = "./checkouts/recognition.pt",
-        detect_conf_thres = 0.25, 
-        detect_iou_thres = 0.45, 
-        cert_ = "cert_.txt",
-        timeout = 5,
-        cuda = True
+            self,
+            detector="./checkouts/detection.pt",
+            recognizer="./checkouts/recognition.pt",
+            detect_conf_thres=0.25,
+            detect_iou_thres=0.45,
+            cert_="cert_.txt",
+            timeout=5,
+            cuda=True
     ):
+        self.checker = None
+        self.recognizer = None
+        self.detector = None
         self.detector_ = detector
         self.detect_conf_thres = detect_conf_thres
         self.detect_iou_thres = detect_iou_thres
@@ -61,7 +59,7 @@ class Lottery:
     def detect(self, img):
         detection = self.detector(img)
         if not detection:
-            return 
+            return
         code, issue, numbers = detection
         return code, issue, numbers
 
@@ -83,30 +81,30 @@ class Lottery:
 
         if not result_process:
             return code, issue, numbers
-        
+
         numbers = number_process(numbers, code)
         issue = issue_process(issue)
-
         return code, issue, numbers
-        
+
     def check(self, code, issue, numbers):
         hits, winning = self.checker(code, issue, numbers)
-
         return code, issue, winning, numbers, hits
 
     def __call__(self, img, recognition_only=False):
+        # 加载
         img = self.imread(img)
+
+        # 检测
         detection = self.detect(img)
         if not detection:
             return
 
+        # 识别
         recognition = self.recognize(img, *detection, result_process=True)
-        if not recognition:
+        if not recognition or recognition_only:
             return
 
-        if recognition_only:
-            return recognition
-
+        # 检查
         return self.check(*recognition)
 
 
@@ -143,8 +141,3 @@ if __name__ == "__main__":
     else:
         result = Result.fromTuple(result)
         print(result)
-        
-    
-
-
-

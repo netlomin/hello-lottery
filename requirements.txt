@@ -12,3 +12,5 @@ torch==1.11.0
 torchvision==0.12.0
 tqdm==4.64.1
 PyQt5==5.15.7
+gradio==3.39.0
+tensorboard==2.13.0

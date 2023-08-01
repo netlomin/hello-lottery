@@ -6,13 +6,13 @@ from copy import deepcopy
 sys.path.append('./')  # to run '$ python *.py' files in subdirectories
 logger = logging.getLogger(__name__)
 import torch
-from .common import *
-from .experimental import *
-from .utils.autoanchor import check_anchor_order
-from .utils.general import make_divisible, check_file, set_logging
-from .utils.torch_utils import time_synchronized, fuse_conv_and_bn, model_info, scale_img, initialize_weights, \
+from models.yolo.common import *
+from models.yolo.experimental import *
+from models.yolo.utils.autoanchor import check_anchor_order
+from models.yolo.utils.general import make_divisible, check_file, set_logging
+from models.yolo.utils.torch_utils import time_synchronized, fuse_conv_and_bn, model_info, scale_img, initialize_weights, \
     select_device, copy_attr
-from .utils.loss import SigmoidBin
+from models.yolo.utils.loss import SigmoidBin
 
 try:
     import thop  # for FLOPS computation
@@ -832,12 +832,12 @@ if __name__ == '__main__':
         y = model(img, profile=True)
 
     # Profile
-    # img = torch.rand(8 if torch.cuda.is_available() else 1, 3, 640, 640).to(device)
-    # y = model(img, profile=True)
+    img = torch.rand(8 if torch.cuda.is_available() else 1, 3, 640, 640).to(device)
+    y = model(img, profile=True)
 
     # Tensorboard
-    # from torch.utils.tensorboard import SummaryWriter
-    # tb_writer = SummaryWriter()
-    # print("Run 'tensorboard --logdir=models/runs' to view tensorboard at http://localhost:6006/")
-    # tb_writer.add_graph(model.model, img)  # add model to tensorboard
-    # tb_writer.add_image('test', img[0], dataformats='CWH')  # add model to tensorboard
+    from torch.utils.tensorboard import SummaryWriter
+    tb_writer = SummaryWriter()
+    print("Run 'tensorboard --logdir=models/runs' to view tensorboard at http://localhost:6006/")
+        tb_writer.add_graph(model.model, img)  # add model to tensorboard
+    tb_writer.add_image('test', img[0], dataformats='CWH')  # add model to tensorboard

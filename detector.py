@@ -76,7 +76,3 @@ class Detector:
         issue = pred_[pred_[:, -1] == 3]
         
         return code, issue, numbers
-        
-
-
-        
